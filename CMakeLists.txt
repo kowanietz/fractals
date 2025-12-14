@@ -13,8 +13,9 @@ include_directories(${GLFW_INCLUDE_DIRS})
 
 set(SOURCES
         src/main.cpp
-        src/glad.cpp
-        src/mandelbrot.cu
+        src/utils/glad.cpp
+        src/kernels/mandelbrot.cu
+        src/kernels/julia.cu
 )
 
 add_executable(fractal ${SOURCES})

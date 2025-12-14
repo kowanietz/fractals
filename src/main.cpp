@@ -9,10 +9,16 @@
 
 int baseIter = 500;
 
+enum class FractalType { MANDELBROT, JULIA };
+
+auto fractalType = FractalType::MANDELBROT;
+
+double juliaRe = -0.715; // wtf
+double juliaIm = 0.257; // TODO: add flag to customize julia constants
+
 int getMaxIter(const double scale) {
     return static_cast<int>(baseIter + 50 * std::log10(3.0 / scale));
 }
-
 
 constexpr int WIDTH = 1600;
 constexpr int HEIGHT = 1200;
@@ -23,10 +29,13 @@ double scale = 3.0;
 
 int MAX_ITER = getMaxIter(scale);
 
-
-// the cuda kernel
+// the cuda kernels
 void mandelbrot_cuda(uint8_t *pixels_d, int width, int height,
                      double centerX, double centerY, double scale, int maxIter);
+
+void julia_cuda(uint8_t *pixels_d, int width, int height,
+                double centerX, double centerY, double scale, int maxIter,
+                double juliaRe, double juliaIm);
 
 // OpenGL stuff
 auto vertexShaderSrc = R"(
@@ -96,16 +105,26 @@ int main(int argc, char *argv[]) {
                 std::cerr << "Invalid iteration count. Using default (500).\n";
                 baseIter = 500;
             }
+        } else if ((strcmp(argv[i], "--fractal") == 0 || strcmp(argv[i], "-f") == 0) && i + 1 < argc) {
+            if (const char *type = argv[++i]; strcmp(type, "julia") == 0) {
+                fractalType = FractalType::JULIA;
+            } else if (strcmp(type, "mandelbrot") == 0) {
+                fractalType = FractalType::MANDELBROT;
+            } else {
+                std::cerr << "Unknown fractal type. Using mandelbrot.\n";
+            }
         }
     }
     std::cout << "Base iterations: " << baseIter << "\n";
+    std::cout << "Fractal type: " << (fractalType == FractalType::JULIA ? "Julia" : "Mandelbrot") << "\n";
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Mandelbrot CUDA", nullptr, nullptr);
+    const char *windowTitle = (fractalType == FractalType::JULIA) ? "Julia CUDA" : "Mandelbrot CUDA";
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, windowTitle, nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create window\n";
         return -1;
@@ -160,7 +179,11 @@ int main(int argc, char *argv[]) {
         if (glfwGetKey(window,GLFW_KEY_DOWN) == GLFW_PRESS) centerY -= panSpeed;
 
 
-        mandelbrot_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER);
+        if (fractalType == FractalType::JULIA) {
+            julia_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER, juliaRe, juliaIm);
+        } else {
+            mandelbrot_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER);
+        }
         cudaMemcpy(pixels.data(), d_pixels, WIDTH * HEIGHT * 4, cudaMemcpyDeviceToHost);
 
         glBindTexture(GL_TEXTURE_2D, tex);
