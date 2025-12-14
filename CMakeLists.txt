@@ -14,6 +14,8 @@ include_directories(${GLFW_INCLUDE_DIRS})
 set(SOURCES
         src/main.cpp
         src/utils/glad.cpp
+        src/utils/shader_utils.cpp
+        src/utils/args_parser.cpp
         src/kernels/mandelbrot.cu
         src/kernels/julia.cu
         src/kernels/burningship.cu
