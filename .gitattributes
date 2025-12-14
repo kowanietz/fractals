@@ -1,3 +1,7 @@
 *.h linguist-detectable=false
 *.h linguist-vendored=false
+
+glad.cpp linguist-detectable=false
+glad.cpp linguist-vendored=false
+
 include/** linguist-vendored=false
