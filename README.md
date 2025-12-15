@@ -38,11 +38,18 @@ Renders fractals such as the Mandelbrot and Julia sets in an interactive window 
 Options:
   -i, --iterations <iterations>     (Default 500)
   -f, --fractal <fractal>           (Default mandelbrot)
+  -t, --theme <theme>               (Default default)
 
 Fractal types: 
     mandelbrot
     julia
     burning_ship
+    
+Themes:
+    default
+    blue_gold
+    rainbow
+    neon
 
 Example:
 

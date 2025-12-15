@@ -25,14 +25,14 @@ double scale = 3.0;
 
 // the cuda kernels
 void mandelbrot_cuda(uint8_t *pixels_d, int width, int height,
-                     double centerX, double centerY, double scale, int maxIter);
+                     double centerX, double centerY, double scale, int maxIter, int theme);
 
 void julia_cuda(uint8_t *pixels_d, int width, int height,
                 double centerX, double centerY, double scale, int maxIter,
-                double juliaRe, double juliaIm);
+                double juliaRe, double juliaIm, int theme);
 
 void burningship_cuda(uint8_t *pixels_d, int width, int height,
-                      double centerX, double centerY, double scale, int maxIter);
+                      double centerX, double centerY, double scale, int maxIter, int theme);
 
 // OpenGL stuff
 auto vertexShaderSrc = R"(
@@ -87,7 +87,7 @@ int main(const int argc, char *argv[]) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 
-    const char *windowTitle = "Fractal CUDA";
+    auto windowTitle = "Fractal CUDA";
     if (config.fractalType == FractalType::JULIA) windowTitle = "Julia CUDA";
     else if (config.fractalType == FractalType::MANDELBROT) windowTitle = "Mandelbrot CUDA";
     else if (config.fractalType == FractalType::BURNING_SHIP) windowTitle = "Burning Ship CUDA";
@@ -148,11 +148,14 @@ int main(const int argc, char *argv[]) {
 
 
         if (config.fractalType == FractalType::JULIA) {
-            julia_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER, juliaRe, juliaIm);
+            julia_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER, juliaRe, juliaIm,
+                       static_cast<int>(config.colorTheme));
         } else if (config.fractalType == FractalType::BURNING_SHIP) {
-            burningship_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER);
+            burningship_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER,
+                             static_cast<int>(config.colorTheme));
         } else {
-            mandelbrot_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER);
+            mandelbrot_cuda(d_pixels, WIDTH, HEIGHT, centerX, centerY, scale, MAX_ITER,
+                            static_cast<int>(config.colorTheme));
         }
         cudaMemcpy(pixels.data(), d_pixels, WIDTH * HEIGHT * 4, cudaMemcpyDeviceToHost);
 

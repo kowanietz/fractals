@@ -21,6 +21,16 @@ Config parseArgs(const int argc, char *argv[]) {
             } else {
                 std::cerr << "Unknown fractal type. Using mandelbrot.\n";
             }
+        } else if ((strcmp(argv[i], "--theme") == 0 || strcmp(argv[i], "-t") == 0) && i + 1 < argc) {
+            if (const char *theme = argv[++i]; strcmp(theme, "blue_gold") == 0) {
+                config.colorTheme = ColorTheme::BLUE_GOLD;
+            } else if (strcmp(theme, "rainbow") == 0) {
+                config.colorTheme = ColorTheme::RAINBOW;
+            } else if (strcmp(theme, "neon") == 0) {
+                config.colorTheme = ColorTheme::NEON;
+            } else {
+                config.colorTheme = ColorTheme::DEFAULT;
+            }
         }
     }
     return config;
