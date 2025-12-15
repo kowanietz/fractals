@@ -41,6 +41,38 @@ __device__ void color_pixel_julia(
             pixel[0] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t)));
             pixel[1] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t + 2.0)));
             pixel[2] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t + 4.0)));
+        } else if (theme == 4) {
+            // FIRE - red/orange/yellow flames
+            const double t = smooth * 0.1;
+            const double r = 255 * (1.5 - 0.5 * cos(t));
+            const double b = 0.2 * cos(t * 2.0);
+            pixel[0] = static_cast<uint8_t>(r > 255 ? 255 : r);
+            pixel[1] = static_cast<uint8_t>(255 * (0.3 + 0.4 * cos(t + 0.5)));
+            pixel[2] = static_cast<uint8_t>(255 * (b > 0.0 ? b : 0.0));
+        } else if (theme == 5) {
+            // OCEAN - deep blue to cyan
+            const double t = smooth * 0.12;
+            pixel[0] = static_cast<uint8_t>(255 * (0.1 + 0.2 * cos(t + 2.0)));
+            pixel[1] = static_cast<uint8_t>(255 * (0.3 + 0.4 * cos(t + 1.0)));
+            pixel[2] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t)));
+        } else if (theme == 6) {
+            // PURPLE - purple/pink
+            const double t = smooth * 0.15;
+            pixel[0] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t)));
+            pixel[1] = static_cast<uint8_t>(255 * (0.2 + 0.3 * cos(t + 2.5)));
+            pixel[2] = static_cast<uint8_t>(255 * (0.5 + 0.5 * cos(t + 1.0)));
+        } else if (theme == 7) {
+            // GRAYSCALE - classic black and white
+            const double intensity = 0.5 + 0.5 * cos(smooth * 0.1);
+            const auto gray = static_cast<uint8_t>(255 * intensity);
+            pixel[0] = pixel[1] = pixel[2] = gray;
+        } else if (theme == 8) {
+            // ELECTRIC - electric blue/white high contrast
+            const double t = smooth * 0.25;
+            const double intensity = pow(0.5 + 0.5 * cos(t), 2.0);
+            pixel[0] = static_cast<uint8_t>(255 * (0.3 + 0.7 * intensity));
+            pixel[1] = static_cast<uint8_t>(255 * (0.5 + 0.5 * intensity));
+            pixel[2] = static_cast<uint8_t>(255 * (0.8 + 0.2 * intensity));
         } else {
             // DEFAULT (Rainbow)
             const double hue = 360.0 * smooth / maxIter;

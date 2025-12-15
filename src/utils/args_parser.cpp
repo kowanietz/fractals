@@ -28,6 +28,16 @@ Config parseArgs(const int argc, char *argv[]) {
                 config.colorTheme = ColorTheme::RAINBOW;
             } else if (strcmp(theme, "neon") == 0) {
                 config.colorTheme = ColorTheme::NEON;
+            } else if (strcmp(theme, "fire") == 0) {
+                config.colorTheme = ColorTheme::FIRE;
+            } else if (strcmp(theme, "ocean") == 0) {
+                config.colorTheme = ColorTheme::OCEAN;
+            } else if (strcmp(theme, "purple") == 0) {
+                config.colorTheme = ColorTheme::PURPLE;
+            } else if (strcmp(theme, "grayscale") == 0) {
+                config.colorTheme = ColorTheme::GRAYSCALE;
+            } else if (strcmp(theme, "electric") == 0) {
+                config.colorTheme = ColorTheme::ELECTRIC;
             } else {
                 config.colorTheme = ColorTheme::DEFAULT;
             }

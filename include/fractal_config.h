@@ -3,7 +3,7 @@
 
 enum class FractalType { MANDELBROT, JULIA, BURNING_SHIP };
 
-enum class ColorTheme { DEFAULT, BLUE_GOLD, RAINBOW, NEON };
+enum class ColorTheme { DEFAULT, BLUE_GOLD, RAINBOW, NEON, FIRE, OCEAN, PURPLE, GRAYSCALE, ELECTRIC };
 
 struct Config {
     int baseIter = 500;
