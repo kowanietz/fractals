@@ -148,11 +148,28 @@ __global__ void julia_kernel(
 
     int iter = 0;
 
-    while (zx * zx + zy * zy <= 4.0 && iter < maxIter) {
+    // check periodicitry
+    double old_zx = 0.0, old_zy = 0.0;
+    int period = 0;
+
+    while (zx * zx + zy * zy <= 256.0 && iter < maxIter) {
         const double tmp = zx * zx - zy * zy + juliaRe;
         zy = 2.0 * zx * zy + juliaIm;
         zx = tmp;
         iter++;
+
+        // check periodicity
+        if (fabs(zx - old_zx) < 1e-10 && fabs(zy - old_zy) < 1e-10) {
+            iter = maxIter;
+            break;
+        }
+
+        period++;
+        if (constexpr int checkPeriod = 20; period == checkPeriod) {
+            period = 0;
+            old_zx = zx;
+            old_zy = zy;
+        }
     }
 
     unsigned const int idx = (y * width + x) * 4;

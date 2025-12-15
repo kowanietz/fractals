@@ -34,6 +34,8 @@ Renders fractals such as the Mandelbrot and Julia sets in an interactive window 
 
 ## Usage
 
+**I recommend `./run.sh -t blue_gold`**
+
 ```bash
 ./run.sh
 

@@ -134,14 +134,17 @@ __global__ void burningship_kernel(
 
     if (x >= width || y >= height) return;
 
-
     const double cx = centerX + (x - width / 2.0) * scale / width;
     const double cy = centerY + (y - height / 2.0) * scale / width;
 
     double zx = 0.0, zy = 0.0;
     int iter = 0;
 
-    while (zx * zx + zy * zy <= 4.0 && iter < maxIter) {
+    // check periodicity
+    double old_zx = 0.0, old_zy = 0.0;
+    int period = 0;
+
+    while (zx * zx + zy * zy <= 256.0 && iter < maxIter) {
         const double zx_abs = fabs(zx);
         const double zy_abs = fabs(zy);
 
@@ -149,6 +152,19 @@ __global__ void burningship_kernel(
         zy = 2.0 * zx_abs * zy_abs + cy;
         zx = tmp;
         iter++;
+
+        // check periodicity
+        if (fabs(zx - old_zx) < 1e-10 && fabs(zy - old_zy) < 1e-10) {
+            iter = maxIter;
+            break;
+        }
+
+        period++;
+        if (constexpr int checkPeriod = 20; period == checkPeriod) {
+            period = 0;
+            old_zx = zx;
+            old_zy = zy;
+        }
     }
 
     unsigned const int idx = (y * width + x) * 4;
